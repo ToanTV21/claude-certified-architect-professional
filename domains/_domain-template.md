@@ -1,27 +1,32 @@
 # Domain NN: [Tên domain] (X% weight)
 
-## Skills trong domain này (theo exam blueprint)
-- [ ] Skill 1 (X.X%)
-- [ ] Skill 2 (X.X%)
+> **Exam view** — dùng khi ôn theo weight. Note chi tiết viết khi học nằm trong
+> [`courses/`](../../courses/README.md); file này chỉ index + phần tổng hợp để revise.
+> Bảng map đầy đủ: [exam-prep/course-map.md](../../exam-prep/course-map.md)
 
-## Key Concepts
+## Blueprint task → lesson phủ nó
+| Task (exam blueprint) | Lesson phủ |
+|-----------------------|------------|
+|                       |            |
+
+## Consolidation — điền sau khi học xong các lesson ở trên
+
+### Key concepts phải thuộc
 - ...
 
-## Important APIs / Parameters
-| Name | Type | Default | Notes |
-|------|------|---------|-------|
-|      |      |         |       |
+### Trade-off phải thuộc (dạng câu hỏi scenario)
+| Tình huống | Chọn | Vì | Loại trừ option nào & vì sao |
+|------------|------|----|------------------------------|
+|            |      |    |                              |
 
-## Gotchas
+### Gotchas
 - [ ] ...
 
-## Exam Tips
+### Exam tips
 - ...
 
-## Code Snippets
-```python
-# snippet
-```
+## Gap — phần course không phủ, phải tự đọc thêm
+- ...
 
 ## Questions / Unclear Points
 - ?
