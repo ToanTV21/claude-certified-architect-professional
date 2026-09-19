@@ -1,5 +1,8 @@
 # Domain NN: [Tên domain] (X% weight)
 
+<!-- Template — copy nội dung dưới vào domains/NN-ten-domain/notes.md.
+     Các đường dẫn ../../ bên dưới tính từ vị trí notes.md, nên chỉ đúng sau khi copy. -->
+
 > **Exam view** — dùng khi ôn theo weight. Note chi tiết viết khi học nằm trong
 > [`courses/`](../../courses/README.md); file này chỉ index + phần tổng hợp để revise.
 > Bảng map đầy đủ: [exam-prep/course-map.md](../../exam-prep/course-map.md)
