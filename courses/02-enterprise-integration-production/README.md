@@ -14,10 +14,10 @@ analysis, enterprise integration, and experimentation methods.
 | # | Lesson | Exam domain | Status |
 |---|--------|-------------|--------|
 | C2.1 | [Success criteria & eval suite trước khi code](notes/01-success-criteria-eval-suite.md) | D4 | ✅ |
-| C2.2 | [POC-to-production checklist & reliability patterns](notes/02-poc-to-production-checklist.md) | D1 + D4 | ⬜ |
-| C2.3 | [Sizing use case: volume, token, cost & feasibility](notes/03-use-case-sizing-feasibility.md) | D1 | ⬜ |
-| C2.4 | [Enterprise integration: compliance, SSO/OAuth, authz, observability](notes/04-enterprise-integration-architecture.md) | D3 + D5 | ⬜ |
-| C2.5 | [A/B test & structured experiment trên hệ thống live](notes/05-ab-testing-experiments.md) | D4 | ⬜ |
+| C2.2 | [POC-to-production checklist & reliability patterns](notes/02-poc-to-production-checklist.md) | D1 + D4 | ✅ |
+| C2.3 | [Sizing use case: volume, token, cost & feasibility](notes/03-use-case-sizing-feasibility.md) | D1 | ✅ |
+| C2.4 | [Enterprise integration: compliance, SSO/OAuth, authz, observability](notes/04-enterprise-integration-architecture.md) | D3 + D5 | ✅ |
+| C2.5 | [A/B test & structured experiment trên hệ thống live](notes/05-ab-testing-experiments.md) | D4 | ✅ |
 
 ## Exercises
 Code thực hành cho course này nằm trong [`exercises/`](exercises/).
