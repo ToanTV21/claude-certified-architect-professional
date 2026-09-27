@@ -155,7 +155,7 @@ Khi làm việc trong project này, Claude Code nên:
    `exam-prep/study-plan.md`
 6b. **Sau mỗi lần write/edit file** phải `git add` + `git commit` (message ngắn gọn) rồi `git push` lên remote GitHub ngay, không gộp nhiều thay đổi rồi mới commit 1 lần
 7. **Ngôn ngữ:**
-   - **Khi chat trực tiếp với user:** luôn dùng **tiếng Anh**.
+   - **Khi chat trực tiếp với user:** luôn dùng **tiếng Việt**. Keyword/thuật ngữ kỹ thuật giữ nguyên **tiếng Anh**, không dịch.
    - **Khi ghi note vào file** (notes.md, comment trong code...): luôn viết phần giải thích bằng **tiếng Việt**. Keyword/thuật ngữ kỹ thuật giữ nguyên **tiếng Anh**, không dịch.
 8. **Khi user yêu cầu "giải thích chi tiết code"**, áp dụng đúng format sau:
    - Explain theo **từng đoạn code ngắn** (1 block nhỏ mỗi lần), không giải thích dồn cả file trong 1 đoạn văn dài
