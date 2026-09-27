@@ -57,5 +57,53 @@ Trả lời 5 quyết định kiến trúc theo đúng thứ tự 5 lesson đã 
 
 **Điểm mấu chốt khi làm bài dạng capstone:** câu trả lời tốt luôn nêu con số cụ thể VÀ nối các quyết định với nhau — sizing model nuôi cost ceiling, feasibility boundary condition (retrieval coverage/freshness) nuôi observability, eval nuôi A/B primary metric. Đây chính là cách đề thi CCAR-P kiểm tra khả năng tư duy end-to-end thay vì từng domain rời rạc.
 
+## Domain 5 — Governance, Safety & Risk Management
+
+### Bài tập: Sort the responsibility — Claude's trained behavior vs. Application layer
+> Nguồn: Course 3 (Responsible AI, Safety & Risk for Architects), checkpoint gắn với [C3.1](../courses/03-responsible-ai-safety-risk/notes/01-training-vs-application-layer.md).
+
+**Đề bài:** Phân loại 5 obligation dưới đây vào đúng 1 trong 2 bucket: **Claude's trained behavior** hoặc **Application layer (bạn phải tự enforce)**.
+1. Refusing to help synthesize a dangerous weapon
+2. Never returning another tenant's data
+3. Declining to produce plainly hateful content
+4. Blocking advice outside the partner's approved script
+5. Requiring a sign-off before a refund is issued
+
+**Đáp án mẫu:**
+| Obligation | Bucket | Vì sao |
+|---|---|---|
+| Refuse dangerous-weapon synthesis | Claude's trained behavior | Harm phổ quát (broad harm), đã nằm trong Constitution/training — không cần build riêng |
+| Never return another tenant's data | Application layer | Domain/deployment-specific rule (multi-tenant isolation) — Claude chưa từng được dạy khái niệm "tenant" của bạn |
+| Decline plainly hateful content | Claude's trained behavior | Harm phổ quát, model đã refuse mặc định |
+| Block advice outside approved script | Application layer | Policy riêng của partner (scope cụ thể của sản phẩm) — phải enforce bằng system prompt + runtime control |
+| Require sign-off before refund | Application layer | Action có side effect, cần tool-call authorization riêng — không phải content safety |
+
+**Bẫy hay gặp:** thấy Claude "test pass" mọi prompt harmful rồi suy ra nó cũng tự động cover luôn domain policy (VD: cross-tenant data, approved script) — đây chính là root cause của case study "trained refusals mistaken for a domain policy" trong lesson: rule chưa từng được encode ở bất kỳ layer nào thì không tồn tại, bất kể Claude "trông có vẻ an toàn" tới đâu.
+
+### Bài tập tổng hợp (capstone): Assemble a responsible deployment — Public-sector benefits assistant
+> Nguồn: Course 3, Cumulative Module Exercise — tổng hợp cả 5 lesson C3.1-C3.5.
+
+**Bối cảnh:** Một benefits assistant cho cơ quan chính phủ giúp xác định eligibility chương trình phúc lợi, đề xuất approve/deny/refer.
+- Framework: FedRAMP ở đúng impact level agency yêu cầu, cộng quy định của agency là applicant bị deny phải được cho biết lý do cụ thể.
+- Case high-stakes/low-confidence: applicant gần ngưỡng eligibility, thiếu giấy tờ — deny sai sẽ cắt mất phúc lợi của một người.
+- Output dễ bị skew: recommendation + lý do đính kèm khi deny.
+- Data: field applicant tự khai, record của agency tra cứu lúc quyết định, derived feature.
+
+Trả lời 5 quyết định theo đúng thứ tự 5 lesson đã học (mỗi quyết định đặt nền cho quyết định sau — chọn sai ở bước 1 thì không bước nào sau cứu lại được):
+1. Đặt boundary giữa trained behavior và application layer.
+2. Đặt vị trí runtime control (input/output screening, tool-call authorization).
+3. Xác định fairness & transparency control.
+4. Định nghĩa human-review routing.
+5. Xây control register.
+
+**Đáp án mẫu:**
+1. Trained behavior chỉ refuse broad harm, chưa từng biết rule eligibility riêng của chương trình này → rule đó thuộc **application layer**. Để lọt vào "tin tưởng trained behavior" ở bước này thì không control nào phía sau lấy lại được.
+2. Đặt input screening / output screening / tool-call authorization, chọn model-based hay deterministic cho từng điểm, và set **fail closed** — vì fail open nghĩa là 1 quyết định deny chưa được screen vẫn tới tay applicant.
+3. Chỉ rõ injection point nào (corpus / prompt framing / examples / routing) có thể làm skew outcome; xây decision logging **một lần duy nhất** — vì applicant bị ảnh hưởng, regulator, build team, và control register đều dùng chung log này.
+4. Route theo confidence + reversibility + cost — không theo volume; case "gần ngưỡng, thiếu giấy tờ, khó đảo ngược" phải vào **pre-action approval**. Nếu chỉ route theo volume, hàng đợi im lặng có thể để lọt 1 quyết định deny high-stakes mà không ai xem.
+5. Map từng FedRAMP obligation sang 1 control + 1 owner + 1 evidence artifact reviewer có thể kiểm tra được. Control không có evidence artifact là 1 lời tuyên bố không chứng minh được, không phải bằng chứng.
+
+**Điểm mấu chốt:** câu trả lời tốt luôn gọi tên cụ thể — injection point nào, fail direction nào, biến routing nào, evidence artifact nào — chứ không mô tả khái niệm chung chung. Đây là cách CCAR-P kiểm tra khả năng áp cả 5 lesson vào 1 tình huống liền mạch, giống hệt cách bài capstone Course 2 kiểm tra D1/D3/D4.
+
 ---
 Thêm câu hỏi mới khi luyện tập theo từng domain.
