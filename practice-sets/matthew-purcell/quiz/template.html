@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CCAR-P Practice Quiz</title>
+<style>
+  /* Design tokens — light mode mặc định */
+  :root {
+    --bg: #f1f4f8; --surface: #ffffff; --surface-2: #f7f9fc; --border: #dde3ea;
+    --text: #17202c; --muted: #5d6b7c; --accent: #1f4e8c; --accent-soft: #e5eefa;
+    --ok: #15803d; --ok-soft: #e3f6e8; --bad: #b42318; --bad-soft: #fdecea;
+    --warn: #a15c07; --warn-soft: #fdf3e1; --sel: #2563eb; --sel-soft: #e8f0fe;
+    --radius: 12px;
+  }
+  /* Dark mode theo hệ điều hành */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f141b; --surface: #171e27; --surface-2: #1d2631; --border: #2c3846;
+      --text: #e6ebf1; --muted: #93a1b2; --accent: #8fb6ec; --accent-soft: #1d2d44;
+      --ok: #5fd08a; --ok-soft: #14301f; --bad: #ff8a80; --bad-soft: #3a1b1b;
+      --warn: #f2b35a; --warn-soft: #3a2a12; --sel: #7aa7ff; --sel-soft: #1c2a47;
+    }
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: 'Inter', 'Noto Sans JP', -apple-system, 'Segoe UI', sans-serif;
+    font-size: 16px; line-height: 1.55;
+  }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 16px; }
+
+  /* Top bar sticky: tiêu đề + timer + điểm */
+  .topbar {
+    position: sticky; top: 0; z-index: 20; background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .topbar-inner {
+    max-width: 960px; margin: 0 auto; padding: 10px 16px;
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  }
+  .brand { font-weight: 700; font-size: 1rem; margin-right: auto; }
+  .brand small { display: block; font-weight: 400; color: var(--muted); font-size: .75rem; }
+  .pill {
+    font-variant-numeric: tabular-nums; font-size: .85rem; padding: 4px 10px;
+    border-radius: 999px; background: var(--surface-2); border: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  .pill.over { color: var(--warn); border-color: var(--warn); }
+  .progress { height: 4px; background: var(--border); }
+  .progress > div { height: 100%; background: var(--accent); width: 0; transition: width .3s; }
+
+  /* Toolbar: filter domain + chế độ xem */
+  .toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0 8px; align-items: center; }
+  .chip {
+    font: inherit; font-size: .8rem; padding: 5px 11px; border-radius: 999px; cursor: pointer;
+    border: 1px solid var(--border); background: var(--surface); color: var(--text);
+  }
+  .chip:hover { border-color: var(--accent); }
+  .chip.active { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+  .spacer { flex: 1; }
+  select.view {
+    font: inherit; font-size: .8rem; padding: 5px 8px; border-radius: 8px;
+    border: 1px solid var(--border); background: var(--surface); color: var(--text);
+  }
+
+  /* Navigator: lưới số câu, màu theo trạng thái */
+  details.navbox { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 16px; }
+  details.navbox summary { cursor: pointer; padding: 10px 14px; font-size: .85rem; color: var(--muted); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(46px, 1fr)); gap: 6px; padding: 0 14px 14px; }
+  .nb {
+    font: inherit; font-size: .75rem; padding: 6px 0; border-radius: 8px; cursor: pointer;
+    border: 1px solid var(--border); background: var(--surface-2); color: var(--text); position: relative;
+  }
+  .nb.ok { background: var(--ok-soft); border-color: var(--ok); color: var(--ok); }
+  .nb.bad { background: var(--bad-soft); border-color: var(--bad); color: var(--bad); }
+  .nb.cur { outline: 2px solid var(--sel); outline-offset: 1px; }
+  .nb.flag::after { content: ""; position: absolute; top: 3px; right: 3px; width: 6px; height: 6px; border-radius: 50%; background: var(--warn); }
+  .nb.hidden { opacity: .25; }
+
+  /* Question card */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
+  .meta { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; font-size: .78rem; }
+  .tag { padding: 2px 8px; border-radius: 6px; background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+  .tag.fmt { background: var(--warn-soft); color: var(--warn); }
+  .qnum { color: var(--muted); }
+  .stem { font-size: 1.02rem; font-weight: 500; margin: 0 0 16px; }
+  .hint { font-size: .8rem; color: var(--muted); margin: -8px 0 12px; }
+
+  .opt {
+    display: flex; gap: 12px; align-items: flex-start; width: 100%; text-align: left;
+    font: inherit; font-size: .95rem; color: var(--text); background: var(--surface);
+    border: 2px solid var(--border); border-radius: 10px; padding: 11px 13px; margin-bottom: 8px; cursor: pointer;
+  }
+  .opt:hover:not(:disabled) { border-color: var(--sel); background: var(--sel-soft); }
+  .opt:disabled { cursor: default; }
+  .opt .k {
+    flex: 0 0 26px; height: 26px; border-radius: 50%; border: 2px solid currentColor;
+    display: grid; place-items: center; font-size: .75rem; font-weight: 700; margin-top: 1px;
+  }
+  .opt.selected { border-color: var(--sel); background: var(--sel-soft); }
+  .opt.correct { border-color: var(--ok); background: var(--ok-soft); }
+  .opt.correct .k { color: var(--ok); }
+  .opt.wrong { border-color: var(--bad); background: var(--bad-soft); }
+  .opt.wrong .k { color: var(--bad); }
+  .opt.missed { border-style: dashed; border-color: var(--ok); }
+
+  /* Scenario matching: mỗi item 1 dòng + dropdown */
+  .mrow { border: 1px solid var(--border); border-radius: 10px; padding: 12px; margin-bottom: 8px; background: var(--surface-2); }
+  .mrow p { margin: 0 0 8px; font-size: .95rem; }
+  .mrow select {
+    width: 100%; font: inherit; font-size: .9rem; padding: 8px; border-radius: 8px;
+    border: 2px solid var(--border); background: var(--surface); color: var(--text);
+  }
+  .mrow.correct select { border-color: var(--ok); background: var(--ok-soft); }
+  .mrow.wrong select { border-color: var(--bad); background: var(--bad-soft); }
+  .mfix { font-size: .82rem; color: var(--ok); margin-top: 6px; font-weight: 600; }
+
+  .btn {
+    font: inherit; font-size: .88rem; font-weight: 600; padding: 9px 16px; border-radius: 9px; cursor: pointer;
+    border: 1px solid var(--border); background: var(--surface); color: var(--text);
+  }
+  .btn:hover:not(:disabled) { border-color: var(--accent); }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+  .btn:disabled { opacity: .45; cursor: not-allowed; }
+  .navrow { display: flex; gap: 8px; justify-content: space-between; margin-top: 16px; flex-wrap: wrap; }
+
+  /* Feedback panel sau khi chấm */
+  .fb { margin-top: 16px; border-radius: 10px; border: 1px solid var(--border); overflow: hidden; }
+  .verdict { padding: 10px 14px; font-weight: 700; }
+  .verdict.ok { background: var(--ok-soft); color: var(--ok); }
+  .verdict.bad { background: var(--bad-soft); color: var(--bad); }
+  .fb-body { padding: 12px 14px; font-size: .92rem; background: var(--surface-2); }
+  .fb-body h4 { margin: 12px 0 4px; font-size: .78rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+  .fb-body h4:first-child { margin-top: 0; }
+  .fb-body p { margin: 0 0 6px; }
+  .fb-body ul { margin: 0; padding-left: 18px; }
+  .fb-body li { margin-bottom: 4px; }
+  .fb-body li.picked { color: var(--bad); font-weight: 600; }
+  .tip { border-left: 3px solid var(--warn); padding: 6px 10px; background: var(--warn-soft); border-radius: 0 8px 8px 0; }
+  .fb-body details { margin-top: 10px; font-size: .86rem; }
+  .fb-body details summary { cursor: pointer; color: var(--muted); }
+
+  /* Modal kết quả */
+  .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,.5); display: none; align-items: center; justify-content: center; z-index: 50; padding: 16px; }
+  .modal-bg.show { display: flex; }
+  .modal { background: var(--surface); border-radius: 16px; padding: 22px; width: 100%; max-width: 560px; max-height: 90vh; overflow: auto; }
+  .modal h2 { margin: 0 0 4px; }
+  .big { font-size: 2.2rem; font-weight: 800; }
+  table { width: 100%; border-collapse: collapse; font-size: .85rem; margin: 12px 0; }
+  th, td { padding: 6px 8px; border-bottom: 1px solid var(--border); text-align: left; }
+  td.n { text-align: right; font-variant-numeric: tabular-nums; }
+  .pass { color: var(--ok); font-weight: 700; }
+  .fail { color: var(--bad); font-weight: 700; }
+  .kbd { font-size: .75rem; color: var(--muted); margin-top: 12px; }
+  kbd { border: 1px solid var(--border); border-radius: 4px; padding: 0 4px; font-size: .72rem; }
+
+  @media (max-width: 768px) {
+    .wrap { padding: 12px; }
+    .card { padding: 14px; }
+    .stem { font-size: .98rem; }
+    .brand small { display: none; }
+    .kbd { display: none; }
+  }
+  @media print {
+    .topbar, .toolbar, details.navbox, .navrow { display: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">CCAR-P Practice · 63 Questions<small>Matthew Purcell practice set · local study copy</small></div>
+    <span class="pill" id="timer" title="Elapsed time (exam limit 120 min)">00:00</span>
+    <span class="pill" id="scorepill">0 / 0 · 0%</span>
+    <button class="btn" id="btn-results">Results</button>
+  </div>
+  <div class="progress"><div id="progress"></div></div>
+</header>
+
+<main class="wrap">
+  <div class="toolbar" id="domains"></div>
+  <div class="toolbar">
+    <select class="view" id="view" aria-label="Show">
+      <option value="all">Show: all questions</option>
+      <option value="unanswered">Show: unanswered</option>
+      <option value="wrong">Show: wrong only</option>
+      <option value="flagged">Show: flagged</option>
+    </select>
+    <label class="chip"><input type="checkbox" id="shuffle"> Shuffle options</label>
+    <span class="spacer"></span>
+    <button class="btn" id="btn-reset">Reset</button>
+  </div>
+
+  <details class="navbox" id="navbox" open>
+    <summary>Question navigator</summary>
+    <div class="grid" id="grid"></div>
+  </details>
+
+  <section class="card" id="card"></section>
+
+  <div class="navrow">
+    <button class="btn" id="btn-prev">← Prev</button>
+    <button class="btn" id="btn-flag">⚑ Flag</button>
+    <button class="btn primary" id="btn-next">Next →</button>
+  </div>
+  <p class="kbd">Keys: <kbd>A</kbd>–<kbd>E</kbd> choose · <kbd>←</kbd>/<kbd>→</kbd> navigate · <kbd>F</kbd> flag</p>
+</main>
+
+<div class="modal-bg" id="modal">
+  <div class="modal" role="dialog" aria-modal="true">
+    <h2>Results</h2>
+    <div id="summary"></div>
+    <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">
+      <button class="btn primary" id="btn-review-wrong">Review wrong answers</button>
+      <button class="btn" id="btn-close">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Data được build_quiz.py nhúng vào đây (nguyên văn đề từ PDF + giải thích tiếng Anh)
+const QUESTIONS = /*__QUIZ_DATA__*/[];
+
+// Key lưu tiến độ trong localStorage (per-browser, chỉ là tiện ích)
+const STORE_KEY = 'ccarp-matthew-quiz-v1';
+const LETTERS = ['A', 'B', 'C', 'D', 'E'];
+
+// ---------- State ----------
+// progress[qid] = { picks: [...], done: bool, correct: bool }
+let S = { progress: {}, flags: {}, cur: 0, domain: 'all', view: 'all', shuffle: false, elapsed: 0 };
+
+// Đọc/ghi localStorage an toàn (private mode có thể throw)
+function load() {
+  try { const raw = localStorage.getItem(STORE_KEY); if (raw) S = Object.assign(S, JSON.parse(raw)); } catch (e) {}
+}
+function save() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(S)); } catch (e) {}
+}
+
+// Escape text trước khi chèn vào HTML
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const $ = id => document.getElementById(id);
+
+// Danh sách index câu hỏi đang hiển thị theo filter domain + chế độ xem
+function visible() {
+  return QUESTIONS.map((q, i) => i).filter(i => {
+    const q = QUESTIONS[i], p = S.progress[q.id];
+    if (S.domain !== 'all' && q.domain !== S.domain) return false;
+    if (S.view === 'unanswered') return !(p && p.done);
+    if (S.view === 'wrong') return p && p.done && !p.correct;
+    if (S.view === 'flagged') return !!S.flags[q.id];
+    return true;
+  });
+}
+
+// Thứ tự hiển thị option (shuffle ổn định theo qid để không nhảy khi re-render)
+function optionOrder(q) {
+  const idx = q.options.map((o, i) => i);
+  if (!S.shuffle) return idx;
+  let seed = [...q.id].reduce((a, c) => a * 31 + c.charCodeAt(0), 7);
+  for (let i = idx.length - 1; i > 0; i--) {
+    seed = (seed * 9301 + 49297) % 233280;
+    const j = Math.floor(seed / 233280 * (i + 1));
+    [idx[i], idx[j]] = [idx[j], idx[i]];
+  }
+  return idx;
+}
+
+// ---------- Render ----------
+function renderDomains() {
+  const doms = ['all', ...new Set(QUESTIONS.map(q => q.domain))];
+  $('domains').innerHTML = doms.map(d =>
+    `<button class="chip ${S.domain === d ? 'active' : ''}" data-d="${esc(d)}">${d === 'all' ? 'All domains' : esc(d)}</button>`
+  ).join('');
+  $('domains').querySelectorAll('.chip').forEach(b => b.onclick = () => {
+    S.domain = b.dataset.d; const v = visible(); if (v.length) S.cur = v[0]; save(); renderAll();
+  });
+}
+
+function renderGrid() {
+  const v = new Set(visible());
+  $('grid').innerHTML = QUESTIONS.map((q, i) => {
+    const p = S.progress[q.id];
+    const cls = ['nb', p && p.done ? (p.correct ? 'ok' : 'bad') : '', i === S.cur ? 'cur' : '',
+      S.flags[q.id] ? 'flag' : '', v.has(i) ? '' : 'hidden'].join(' ');
+    return `<button class="${cls}" data-i="${i}" title="${esc(q.domain)}">${q.id}</button>`;
+  }).join('');
+  $('grid').querySelectorAll('.nb').forEach(b => b.onclick = () => { S.cur = +b.dataset.i; save(); renderAll(); });
+}
+
+function renderStats() {
+  const done = QUESTIONS.filter(q => S.progress[q.id] && S.progress[q.id].done);
+  const ok = done.filter(q => S.progress[q.id].correct).length;
+  const pct = done.length ? Math.round(ok / done.length * 100) : 0;
+  $('scorepill').textContent = `${ok} / ${done.length} · ${pct}%`;
+  $('progress').style.width = (done.length / QUESTIONS.length * 100) + '%';
+}
+
+function renderCard() {
+  const q = QUESTIONS[S.cur];
+  const p = S.progress[q.id] || { picks: [], done: false };
+  let body = '';
+
+  if (q.type === 'matching') {
+    // Scenario matching: dropdown cho từng item
+    body = q.items.map((it, i) => {
+      const pick = p.picks[i] || '';
+      const st = p.done ? (pick === q.answer[i] ? 'correct' : 'wrong') : '';
+      return `<div class="mrow ${st}">
+        <p><b>${i + 1}.</b> ${esc(it)}</p>
+        <select data-i="${i}" ${p.done ? 'disabled' : ''}>
+          <option value="">— choose —</option>
+          ${q.choices.map(c => `<option ${c === pick ? 'selected' : ''}>${esc(c)}</option>`).join('')}
+        </select>
+        ${p.done && pick !== q.answer[i] ? `<div class="mfix">✓ ${esc(q.answer[i])}</div>` : ''}
+      </div>`;
+    }).join('');
+    if (!p.done) {
+      const ready = q.items.every((_, i) => p.picks[i]);
+      body += `<button class="btn primary" id="btn-check" ${ready ? '' : 'disabled'}>Check answers</button>`;
+    }
+  } else {
+    // Multiple choice / multiple response
+    body = optionOrder(q).map(i => {
+      const o = q.options[i], picked = p.picks.includes(o.key), right = q.answer.includes(o.key);
+      let cls = picked ? 'selected' : '';
+      if (p.done) cls = right ? (picked ? 'correct' : 'correct missed') : (picked ? 'wrong' : '');
+      return `<button class="opt ${cls}" data-k="${o.key}" ${p.done ? 'disabled' : ''}>
+        <span class="k">${o.key}</span><span>${esc(o.text)}</span></button>`;
+    }).join('');
+  }
+
+  const selHint = q.type === 'multiple' && !p.done
+    ? `<p class="hint">Select ${q.select} (${p.picks.length}/${q.select} selected) — checked automatically when complete.</p>` : '';
+
+  $('card').innerHTML = `
+    <div class="meta">
+      <span class="qnum">Question ${q.id} · ${S.cur + 1} of ${QUESTIONS.length}</span>
+      <span class="tag">${esc(q.domain)}</span>
+      <span class="tag fmt">${esc(q.format)}${q.select ? ' · select ' + q.select : ''}</span>
+      ${S.flags[q.id] ? '<span class="tag fmt">⚑ flagged</span>' : ''}
+    </div>
+    <p class="stem">${esc(q.stem)}</p>
+    ${selHint}
+    <div id="answers">${body}</div>
+    ${p.done ? feedback(q, p) : ''}`;
+
+  // Gắn sự kiện
+  $('card').querySelectorAll('.opt').forEach(b => b.onclick = () => pick(q, b.dataset.k));
+  $('card').querySelectorAll('select').forEach(s => s.onchange = () => {
+    const pr = ensure(q); pr.picks[+s.dataset.i] = s.value; save(); renderCard();
+  });
+  const chk = $('btn-check'); if (chk) chk.onclick = () => grade(q);
+  $('btn-flag').textContent = S.flags[q.id] ? '⚑ Unflag' : '⚑ Flag';
+}
+
+// Panel đáp án + giải thích sau khi chấm
+function feedback(q, p) {
+  let answerTxt, whyNot = '';
+  if (q.type === 'matching') {
+    const n = q.answer.filter((a, i) => p.picks[i] === a).length;
+    answerTxt = `${n} / ${q.answer.length} items correct`;
+  } else {
+    answerTxt = 'Correct answer: ' + q.answer.join(', ');
+    const keys = Object.keys(q.why_not || {});
+    if (keys.length) {
+      whyNot = `<h4>Why not the others</h4><ul>${keys.map(k =>
+        `<li class="${p.picks.includes(k) ? 'picked' : ''}"><b>${k}.</b> ${esc(q.why_not[k])}${p.picks.includes(k) ? ' ← your choice' : ''}</li>`
+      ).join('')}</ul>`;
+    }
+  }
+  const author = q.author_rationale ? `<details><summary>Original rationale (Matthew Purcell)</summary>
+      <p>${esc(q.author_rationale)}</p>${q.author_why_not ? `<p><i>Why not the others:</i> ${esc(q.author_why_not)}</p>` : ''}</details>` : '';
+  return `<div class="fb">
+    <div class="verdict ${p.correct ? 'ok' : 'bad'}">${p.correct ? '✓ Correct' : '✗ Incorrect'} — ${esc(answerTxt)}</div>
+    <div class="fb-body">
+      <h4>Explanation</h4><p>${esc(q.explanation)}</p>
+      ${whyNot}
+      ${q.tip ? `<h4>Exam tip</h4><p class="tip">${esc(q.tip)}</p>` : ''}
+      ${author}
+    </div></div>`;
+}
+
+function renderAll() { renderDomains(); renderGrid(); renderStats(); renderCard(); $('view').value = S.view; $('shuffle').checked = S.shuffle; }
+
+// ---------- Logic chấm ----------
+function ensure(q) { return S.progress[q.id] || (S.progress[q.id] = { picks: [], done: false, correct: false }); }
+
+function pick(q, key) {
+  const p = ensure(q); if (p.done) return;
+  if (q.type === 'single') { p.picks = [key]; return grade(q); }   // single: chấm ngay khi chọn
+  const at = p.picks.indexOf(key);
+  if (at >= 0) p.picks.splice(at, 1); else p.picks.push(key);        // multiple: toggle
+  if (p.picks.length === q.select) return grade(q);                  // đủ số lượng → tự chấm
+  save(); renderCard();
+}
+
+function grade(q) {
+  const p = ensure(q);
+  if (q.type === 'matching') p.correct = q.answer.every((a, i) => p.picks[i] === a);  // all-or-nothing
+  else p.correct = [...p.picks].sort().join() === [...q.answer].sort().join();
+  p.done = true; save(); renderGrid(); renderStats(); renderCard();
+}
+
+function move(dir) {
+  const v = visible(); if (!v.length) return;
+  const pos = v.indexOf(S.cur);
+  const next = pos < 0 ? v[0] : v[Math.min(v.length - 1, Math.max(0, pos + dir))];
+  S.cur = next; save(); renderAll(); window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ---------- Kết quả theo domain ----------
+function showResults() {
+  const rows = [...new Set(QUESTIONS.map(q => q.domain))].map(d => {
+    const qs = QUESTIONS.filter(q => q.domain === d);
+    const done = qs.filter(q => S.progress[q.id] && S.progress[q.id].done);
+    const ok = done.filter(q => S.progress[q.id].correct).length;
+    const pct = qs.length ? Math.round(ok / qs.length * 100) : 0;
+    return { d, total: qs.length, done: done.length, ok, pct };
+  });
+  const ok = rows.reduce((a, r) => a + r.ok, 0), done = rows.reduce((a, r) => a + r.done, 0);
+  const pct = Math.round(ok / QUESTIONS.length * 100);
+  $('summary').innerHTML = `
+    <div class="big ${pct >= 75 ? 'pass' : 'fail'}">${pct}%</div>
+    <p>${ok} correct out of ${QUESTIONS.length} (${done} answered) · time ${fmt(S.elapsed)}.
+       Target: ≥ 75% in every domain (pass mark ≈ 720/1000).</p>
+    <table><thead><tr><th>Domain</th><th class="n">Correct</th><th class="n">Answered</th><th class="n">Score</th></tr></thead>
+    <tbody>${rows.map(r => `<tr><td>${esc(r.d)}</td><td class="n">${r.ok}/${r.total}</td><td class="n">${r.done}</td>
+      <td class="n ${r.pct >= 75 ? 'pass' : 'fail'}">${r.pct}%</td></tr>`).join('')}</tbody></table>`;
+  $('modal').classList.add('show');
+}
+
+// ---------- Timer ----------
+const fmt = s => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+setInterval(() => {
+  if (document.hidden) return;              // không đếm khi tab ẩn
+  S.elapsed++; $('timer').textContent = fmt(S.elapsed);
+  $('timer').classList.toggle('over', S.elapsed > 120 * 60);
+  if (S.elapsed % 10 === 0) save();
+}, 1000);
+
+// ---------- Wiring ----------
+$('btn-prev').onclick = () => move(-1);
+$('btn-next').onclick = () => move(1);
+$('btn-flag').onclick = () => { const id = QUESTIONS[S.cur].id; S.flags[id] = !S.flags[id]; save(); renderAll(); };
+$('btn-results').onclick = showResults;
+$('btn-close').onclick = () => $('modal').classList.remove('show');
+$('modal').onclick = e => { if (e.target === $('modal')) $('modal').classList.remove('show'); };
+$('btn-review-wrong').onclick = () => {
+  $('modal').classList.remove('show'); S.view = 'wrong'; S.domain = 'all';
+  const v = visible(); if (v.length) S.cur = v[0]; save(); renderAll();
+};
+$('view').onchange = e => { S.view = e.target.value; const v = visible(); if (v.length && !v.includes(S.cur)) S.cur = v[0]; save(); renderAll(); };
+$('shuffle').onchange = e => { S.shuffle = e.target.checked; save(); renderCard(); };
+$('btn-reset').onclick = () => {
+  if (!confirm('Reset all answers, flags and the timer?')) return;
+  S = { progress: {}, flags: {}, cur: 0, domain: 'all', view: 'all', shuffle: S.shuffle, elapsed: 0 };
+  save(); renderAll();
+};
+// Phím tắt: A–E chọn đáp án, mũi tên chuyển câu, F đánh dấu
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'SELECT' || e.ctrlKey || e.metaKey || e.altKey) return;
+  const q = QUESTIONS[S.cur], k = e.key.toUpperCase();
+  if (e.key === 'ArrowRight') move(1);
+  else if (e.key === 'ArrowLeft') move(-1);
+  else if (k === 'F') $('btn-flag').click();
+  else if (q.type !== 'matching' && LETTERS.includes(k) && q.options.some(o => o.key === k)) pick(q, k);
+});
+// Trên mobile, thu gọn navigator mặc định cho gọn màn hình
+if (window.matchMedia('(max-width: 768px)').matches) $('navbox').removeAttribute('open');
+
+load();
+if (S.cur >= QUESTIONS.length) S.cur = 0;
+$('timer').textContent = fmt(S.elapsed);
+renderAll();
+</script>
+</body>
+</html>
