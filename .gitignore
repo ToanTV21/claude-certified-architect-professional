@@ -14,6 +14,10 @@ env/
 dist/
 build/
 
+# Practice set gốc (bản quyền tác giả) + quiz HTML build từ nó — chỉ dùng nội bộ, không push
+practice-sets/**/*.pdf
+practice-sets/matthew-purcell/quiz/dist/
+
 # OS
 .DS_Store
 Thumbs.db
