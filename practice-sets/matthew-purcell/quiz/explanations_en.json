@@ -1,0 +1,613 @@
+{
+  "1.1": {
+    "answer": ["B"],
+    "explanation": "Every request follows the same known, stable steps. That is the textbook case for a fixed workflow (prompt chaining): predictable, auditable per step, easy to debug, and you can insert validation between steps.",
+    "why_not": {
+      "A": "Multi-agent coordination adds overhead the problem does not need.",
+      "C": "Autonomous planning exists for paths that are NOT known in advance; here it only adds cost and unpredictability.",
+      "D": "A monolithic prompt loses step-level control and validation."
+    },
+    "tip": "Signal words: 'same steps', 'never vary', 'stable' → fixed workflow."
+  },
+  "1.2": {
+    "answer": ["D"],
+    "explanation": "The path to the answer only emerges during execution (step N+1 depends on what step N revealed). Only a plan → act → observe loop handles that, which is exactly when an autonomous agent earns its complexity.",
+    "why_not": {
+      "A": "Assumes the steps can be enumerated in advance.",
+      "B": "A router still requires the path to be known up front and cannot follow up mid-task.",
+      "C": "Wasteful, and still cannot react to intermediate findings."
+    },
+    "tip": "Compare with 1.1: the deciding variable is whether the path is known in advance."
+  },
+  "1.3": {
+    "answer": ["C"],
+    "explanation": "Skipped items plus shallow reasoning on a long multi-part task is a structural (decomposition) problem, not a wording or capacity problem. Sequenced subtasks give each step focused context and produce verifiable intermediate output (e.g. a per-policy JSON you can check for completeness).",
+    "why_not": {
+      "A": "Treats capacity as the issue when structure is; a blind, expensive fix.",
+      "B": "Few-shot helps format/style, not coverage of 40 policies.",
+      "D": "Temperature affects randomness, not coverage."
+    },
+    "tip": "'Already refined the prompt wording' eliminates 'tweak the prompt again' answers."
+  },
+  "1.4": {
+    "answer": ["A"],
+    "explanation": "Ordering, a single ordered audit trail, and halt-on-exception all require one central point of control. A supervisor/orchestrator is the only option that GUARANTEES all three.",
+    "why_not": {
+      "B": "Ordering and halting become emergent behaviour rather than guaranteed.",
+      "C": "Directly violates 'later agents must not run after an exception'.",
+      "D": "Sequencing and exception handling are left to chance."
+    },
+    "tip": "When a requirement says 'must' / 'guarantee', choose a deterministic control mechanism, not model discretion."
+  },
+  "1.5": {
+    "answer": ["C"],
+    "explanation": "A first use case should be chosen on Value (measurable) × Feasibility (data access, integration) × Risk (manageable). Demonstrable value is what builds durable organisational support for the next projects.",
+    "why_not": {
+      "A": "Optimises for spectacle, not value.",
+      "B": "Optimises for politics; enthusiasm is not value.",
+      "D": "Optimises for speed while ignoring impact — nothing is proven."
+    },
+    "tip": ""
+  },
+  "1.6": {
+    "answer": ["D"],
+    "explanation": "The architecture is missing the feedback stage of input → processing → output → feedback. Knowing correctness in production requires ground truth: downstream corrections, user signals, and a labelled sample of real outputs feeding an evaluation set.",
+    "why_not": {
+      "A": "Changes the model but still measures nothing.",
+      "B": "Monitors cost, not correctness.",
+      "C": "Monitors configuration, not correctness."
+    },
+    "tip": "Questions about 'is it actually correct in production?' → the answer involves evals / feedback / labelled samples."
+  },
+  "1.7": {
+    "answer": ["B"],
+    "explanation": "Factual data that changes daily is the canonical case for retrieval augmentation: the model always answers from current data without retraining.",
+    "why_not": {
+      "A": "Fine-tuning teaches behaviour, not fast-changing facts; stale within days.",
+      "C": "Costly, does not scale with catalogue size, and suffers mid-context recall loss.",
+      "D": "Simply accepts wrong answers."
+    },
+    "tip": "Changing knowledge → RAG. Changing behaviour/format → prompting/few-shot (fine-tuning last)."
+  },
+  "1.8": {
+    "answer": ["A"],
+    "explanation": "Tool-selection accuracy falling as breadth grows is the classic signal of an overloaded agent. Domain-specific agents behind a router/supervisor restore focused prompts and toolsets, and procurement becomes a new agent rather than more load on an overloaded one.",
+    "why_not": {
+      "B": "Compounds the existing problem.",
+      "C": "A longer prompt is harder to follow, not easier.",
+      "D": "Misdiagnoses the failure: the problem is choosing the wrong tool, not failing to use tools."
+    },
+    "tip": "Compare with 3.2: there, 'a third of tools never invoked' makes 'audit and remove' the first step."
+  },
+  "1.9": {
+    "answer": ["B", "D"],
+    "explanation": "Fixed workflows win when the steps are known and identical per request, and when every step must be auditable and reproducible.",
+    "why_not": {
+      "A": "Unpredictable inputs needing dynamic handling favour an agent.",
+      "C": "Creative exploration of multiple paths favours dynamic planning.",
+      "E": "Autonomous recovery from failures is an agent trait."
+    },
+    "tip": "Multiple-response pattern: 2 correct answers + 3 answers that are correct for the OPPOSITE pattern."
+  },
+  "1.10": {
+    "answer": ["C", "E"],
+    "explanation": "Multi-agent earns its complexity through (1) specialisation / context isolation when sub-tasks need different tools and context, and (2) parallelism across independent sub-tasks.",
+    "why_not": {
+      "A": "Volume is a scaling concern solvable within any pattern.",
+      "B": "Budget is a fact, not an architectural driver.",
+      "D": "Prestige is not an architectural driver."
+    },
+    "tip": ""
+  },
+  "1.11": {
+    "answer": ["single augmented LLM call", "fixed workflow", "autonomous agent", "multi-agent system", "single augmented LLM call"],
+    "explanation": "1 and 5 are single transformations (summarise, translate) with supplied context — retrieval or a glossary is augmentation, not an extra LLM step. 2 is a stable, repeating sequence. 3's diagnostic path depends on each result. 4 needs distinct specialists coordinated into one output.",
+    "tip": "Options can be reused — do not assume a one-to-one mapping."
+  },
+
+  "2.1": {
+    "answer": ["C"],
+    "explanation": "Accuracy has been MEASURED as comparable, and volume is 400k/day with latency and cost sensitivity. The disciplined choice is the smallest model that meets the accuracy target, with ongoing evaluation to confirm it keeps meeting it.",
+    "why_not": {
+      "A": "'Always' substitutes an assumption for measurement.",
+      "B": "Avoids the very evaluation that should drive the choice.",
+      "D": "Makes behaviour unpredictable and undebuggable."
+    },
+    "tip": "'Validate with ongoing evaluation' is a hallmark of the correct CCAR-P answer."
+  },
+  "2.2": {
+    "answer": ["A"],
+    "explanation": "Prompt caching matches on the prompt PREFIX. A timestamp and request ID at position zero make every prefix unique, so nothing can hit. Fix: static content first (tools → system → static docs), dynamic values after the cache breakpoint.",
+    "why_not": {
+      "B": "Caching has a MINIMUM cacheable length, not a maximum; 9k static tokens is ideal for caching.",
+      "C": "False — system prompts and tools are the most commonly cached content.",
+      "D": "Frequent requests keep the cache warm (TTL refreshes on hit); they cannot drive hit rate to zero."
+    },
+    "tip": "Static first, dynamic last."
+  },
+  "2.3": {
+    "answer": ["D"],
+    "explanation": "Prompting techniques are per-task decisions based on measured benefit. Chain-of-thought pays off on multi-step reasoning and only adds cost and latency on simple extraction.",
+    "why_not": {
+      "A": "Throws away a proven gain on contract analysis.",
+      "B": "Doubles down where there is no benefit.",
+      "C": "Factually false."
+    },
+    "tip": "Answers with 'platform-wide', 'always', 'never' are usually wrong; 'selectively, based on measured benefit' is usually right."
+  },
+  "2.4": {
+    "answer": ["B"],
+    "explanation": "Content buried in the middle of a long context gets weaker attention ('lost in the middle'). Moving the rule to the start or end and structurally separating rules from reference content (e.g. XML-tagged sections) is the highest-leverage fix.",
+    "why_not": {
+      "A": "Bloats and dilutes the prompt further.",
+      "C": "Temperature affects sampling randomness, not rule salience.",
+      "D": "Upper case is superstition, not a reliable priority mechanism."
+    },
+    "tip": "Architect's extra angle: a data-protection rule should not rely on the prompt alone — keep internal pricing out of context or add an output guardrail."
+  },
+  "2.5": {
+    "answer": ["A"],
+    "explanation": "For precise format compliance, showing beats telling: complete few-shot exemplars give the model a concrete target that prose descriptions cannot match.",
+    "why_not": {
+      "B": "Addresses length, not format fidelity.",
+      "C": "Increases variation — the opposite of what is needed.",
+      "D": "Adds engineering without fixing per-section formatting."
+    },
+    "tip": "Few-shot fixes format/style (2.5), not coverage/omissions (1.3)."
+  },
+  "2.6": {
+    "answer": ["C"],
+    "explanation": "Retrieving only the relevant sections fixes BOTH stated problems at once: it avoids mid-context recall degradation and cuts per-request tokens dramatically.",
+    "why_not": {
+      "A": "Barely affects recall and does not reduce cost (for long documents, queries are actually best placed at the end).",
+      "B": "Does not reduce cost and adds latency.",
+      "D": "Saves trivial tokens while destroying structure that helps the model navigate."
+    },
+    "tip": "When the question names two problems, pick the answer that solves both."
+  },
+  "2.7": {
+    "answer": ["A", "D"],
+    "explanation": "A cacheable static prefix makes repeated content much cheaper, and loading specialised instructions on demand (modular prompts, Agent Skills — progressive disclosure) means each request pays only for what it needs.",
+    "why_not": {
+      "B": "Increases token usage.",
+      "C": "Adds tokens to every request.",
+      "E": "Just relocates the same tokens (and can break caching if placed after dynamic content)."
+    },
+    "tip": ""
+  },
+  "2.8": {
+    "answer": ["B", "E"],
+    "explanation": "Clearly delimited sections with explicit priority when rules conflict remove ambiguity, and concrete examples of the exact failing cases anchor the desired behaviour.",
+    "why_not": {
+      "A": "Adds variance.",
+      "C": "The middle is the position of WEAKEST attention.",
+      "D": "Removes the structure that aids adherence."
+    },
+    "tip": ""
+  },
+
+  "3.1": {
+    "answer": ["C"],
+    "explanation": "MCP fits exactly this shape: many systems × many consuming applications, decentralised ownership, frequent tool churn. Each team maintains its server once and every application reuses it (N×M integrations become N+M).",
+    "why_not": {
+      "A": "Maintenance multiplies by the number of applications.",
+      "B": "Creates a bottleneck team and a single point of failure, centralising ownership against how the org works.",
+      "D": "Bypasses business logic and access control — a security anti-pattern."
+    },
+    "tip": "Signal words: 'multiple applications', 'reuse', 'different teams own', 'added and retired frequently' → MCP."
+  },
+  "3.2": {
+    "answer": ["D"],
+    "explanation": "This is capability bloat. Removing dead and overlapping tools directly restores selection accuracy, and progressive discovery (tool search / on-demand loading) keeps the per-request tool surface small as the catalogue grows.",
+    "why_not": {
+      "A": "Adds context without reducing confusion.",
+      "B": "Treats the symptom at higher cost.",
+      "C": "Adds latency and tokens to every call."
+    },
+    "tip": "Least privilege: remove unneeded capability outright rather than describing it better."
+  },
+  "3.3": {
+    "answer": ["A"],
+    "explanation": "Prompt instructions are not a security boundary. Authorisation must be enforced in the access-control layer — per-user scoped credentials or pass-through (on-behalf-of) auth — so the model cannot return what it cannot retrieve.",
+    "why_not": {
+      "B": "Not a real compliance rule.",
+      "C": "Expands the blast radius, the opposite of least privilege.",
+      "D": "A credential-handling anti-pattern; the model must never hold user passwords."
+    },
+    "tip": "Golden rule: 'who can see what' is enforced deterministically in the system layer, never by the prompt."
+  },
+  "3.4": {
+    "answer": ["B"],
+    "explanation": "The failure is structural: fixed-size chunks sever clauses from the definitions and cross-references that give them meaning. Chunking aligned to clauses/sections plus linkage metadata preserves interpretive context (contextual retrieval is a related technique).",
+    "why_not": {
+      "A": "Makes fragmentation worse.",
+      "C": "Floods the context hoping to get lucky; costly and noisy.",
+      "D": "Discards the semantic retrieval that works well for other queries."
+    },
+    "tip": ""
+  },
+  "3.5": {
+    "answer": ["D"],
+    "explanation": "Exact identifiers are where lexical matching (keyword/BM25) wins and embeddings blur; natural language is where semantic search wins. Hybrid retrieval matches the strategy to the query shape.",
+    "why_not": {
+      "A": "Breaks the natural-language queries that currently work.",
+      "B": "Marginal gains on a fundamentally lexical problem.",
+      "C": "Pushes the system's failure onto users."
+    },
+    "tip": "IDs / SKUs / error codes / proper nouns failing on vector search → hybrid retrieval."
+  },
+  "3.6": {
+    "answer": ["A"],
+    "explanation": "Quantify both sides against the SLA: 1.6 s + 0.5 s ≈ 2.1 s p95, versus a 3 s SLA — about 0.9 s of headroom remains, for a material +7-point accuracy gain. Adopt and monitor p95.",
+    "why_not": {
+      "B": "Dogma ('never'), not analysis.",
+      "C": "Fragments behaviour arbitrarily.",
+      "D": "Defers a decision the data already supports."
+    },
+    "tip": "When the question gives numbers, do the arithmetic."
+  },
+  "3.7": {
+    "answer": ["C"],
+    "explanation": "At scale, observability means structured traces and key metrics on every session (cheap, searchable, joined by correlation IDs), with expensive full-payload capture applied selectively — sampled and triggered on errors.",
+    "why_not": {
+      "A": "Loses the production context that caused the failure.",
+      "B": "Discards the intermediate steps where agents usually fail.",
+      "D": "A lagging indicator that costs reputation."
+    },
+    "tip": ""
+  },
+  "3.8": {
+    "answer": ["B"],
+    "explanation": "Cross-organisation coordination without exposing internals is the defining use case for agent-to-agent communication: each agent is the boundary that mediates access to its own systems.",
+    "why_not": {
+      "A": "Exposes exactly what neither party will expose.",
+      "C": "Exposes internal systems across the trust boundary.",
+      "D": "Imposes an operating model neither company asked for."
+    },
+    "tip": "MCP = agent ↔ tools/data (inside a trust boundary). A2A = agent ↔ agent (often across trust boundaries)."
+  },
+  "3.9": {
+    "answer": ["C", "D"],
+    "explanation": "The fault is in retrieval/indexing, not the model. A validated re-indexing pipeline stops stale embeddings entering the index, and version metadata with filtering stops superseded chunks being served even if they linger.",
+    "why_not": {
+      "A": "Retrieves more of the same stale content.",
+      "B": "Too slow and sparse to catch nightly issues.",
+      "E": "Does not change what is retrieved."
+    },
+    "tip": "RAG wrong after a data refresh → check retrieval/indexing first, not model settings."
+  },
+  "3.10": {
+    "answer": ["A", "E"],
+    "explanation": "Selection errors between related tools come from overlap and ambiguity. Make each tool's purpose, inputs and boundaries (when to use / when not to use) explicit, and eliminate overlapping tools outright.",
+    "why_not": {
+      "B": "Increases the confusion surface.",
+      "C": "Institutionalises wrong choices.",
+      "D": "Discards typed input schemas, making errors harder to catch and raising security risk."
+    },
+    "tip": ""
+  },
+  "3.11": {
+    "answer": ["B", "D"],
+    "explanation": "Progressive discovery pays off when only a small slice of a large catalogue is relevant per request, and when stuffing everything up front degrades quality or blows the context budget.",
+    "why_not": {
+      "A": "Monolithic context is simpler and fine here.",
+      "C": "Progressive discovery needs intermediate steps (find → load → use).",
+      "E": "Monolithic context is fine (and cacheable) here."
+    },
+    "tip": ""
+  },
+  "3.12": {
+    "answer": ["MCP server", "direct API integration", "agent-to-agent protocol", "MCP server", "direct API integration"],
+    "explanation": "1 and 4 need standardised, reusable, discoverable access for many current and future consumers → MCP. 2 and 5 are deterministic, tightly scoped calls inside owned pipelines → direct integration, no discovery layer needed. 3 crosses an organisational trust boundary between autonomous agents → agent-to-agent.",
+    "tip": "Many consumers + discovery → MCP · deterministic, narrow, owned pipeline → direct API · agent ↔ agent across orgs → A2A."
+  },
+
+  "4.1": {
+    "answer": ["D"],
+    "explanation": "'Good enough' only has meaning against task-specific metrics tied to business outcomes, with launch thresholds agreed in advance. Evals act as acceptance criteria and as the launch gate.",
+    "why_not": {
+      "A": "Measures the model, not your solution.",
+      "B": "Anecdote, not measurement.",
+      "C": "Measures cost, not quality."
+    },
+    "tip": ""
+  },
+  "4.2": {
+    "answer": ["B"],
+    "explanation": "Real (anonymised) queries capture the true input distribution; deliberately constructed edge cases probe where the system breaks. Together they test both the common path and the failure surface.",
+    "why_not": {
+      "A": "Inherits the documentation's blind spots; synthetic data is a supplement, not the primary source.",
+      "C": "Only proves the model memorised its prompt (leakage between prompt and test set).",
+      "D": "Tests the builders' assumptions with the builders' assumptions."
+    },
+    "tip": ""
+  },
+  "4.3": {
+    "answer": ["A"],
+    "explanation": "Subjective quality at scale calls for a mixed method: an LLM judge applies the rubric to every output, and periodic calibration against human expert ratings keeps the judge honest.",
+    "why_not": {
+      "B": "Exact matching cannot score novel copy.",
+      "C": "Does not scale.",
+      "D": "Abandons a measurable requirement."
+    },
+    "tip": "Grader choice: code-based for deterministic answers · LLM-as-judge for subjective at scale · humans for gold standard and calibration."
+  },
+  "4.4": {
+    "answer": ["C"],
+    "explanation": "Offline gains do not always transfer to the production distribution. A controlled A/B test on a fraction of traffic, with quality and guardrail metrics, converts offline promise into production evidence at bounded risk.",
+    "why_not": {
+      "A": "Skips risk control.",
+      "B": "Re-measures the SAME distribution — no new information about production.",
+      "D": "Opinion sampling, not evaluation."
+    },
+    "tip": ""
+  },
+  "4.5": {
+    "answer": ["B"],
+    "explanation": "Optimise from evidence: trace-level cost analysis shows whether spend is driven by context size, cache misses, output length, or model choice. Then apply the lever that targets the dominant driver, evaluating quality impact at each step.",
+    "why_not": {
+      "A": "One lever applied blindly.",
+      "C": "Refuses the mandate.",
+      "D": "Truncates outputs regardless of consequence."
+    },
+    "tip": "Cost levers: prompt caching, Batch API, model routing by difficulty, context trimming (RAG vs stuffing), sensible output limits."
+  },
+  "4.6": {
+    "answer": ["D"],
+    "explanation": "A model version change is a regression risk. The full evaluation suite catches task-level regressions that spot checks miss, and a canary rollout bounds the blast radius of anything the suite did not catch. Pin model versions and treat upgrades as controlled changes.",
+    "why_not": {
+      "A": "'Newer' does not mean 'better on your tasks'.",
+      "B": "Forfeits improvements without adding safety.",
+      "C": "Splits the fleet without protecting either half."
+    },
+    "tip": ""
+  },
+  "4.7": {
+    "answer": ["C"],
+    "explanation": "Retrieval relevance and grounding rates are pipeline-internal signals that move BEFORE user-visible quality does — the definition of a leading indicator.",
+    "why_not": {
+      "A": "Lagging — the damage is already done.",
+      "B": "Cost, not quality.",
+      "D": "Lagging and far too coarse."
+    },
+    "tip": ""
+  },
+  "4.8": {
+    "answer": ["B", "C"],
+    "explanation": "Regulated domains need both sides: an expert-labelled golden dataset proving competence on typical and high-risk cases, and adversarial tests proving the safety boundaries hold under attack.",
+    "why_not": {
+      "A": "Theatre on hand-picked examples.",
+      "D": "Measures the wrong thing.",
+      "E": "Arrives after the risk has shipped — the question asks for PRE-production."
+    },
+    "tip": ""
+  },
+  "4.9": {
+    "answer": ["A", "D"],
+    "explanation": "Latency, model and prompts are unchanged, so the cause is almost certainly in what is flowing through the system. End-to-end traces show what actually happened in failing sessions (retrieved context, tool I/O), and drift analysis shows whether the inputs changed underneath it.",
+    "why_not": {
+      "B": "Volume does not explain a quality change.",
+      "C": "Spend, not quality.",
+      "E": "Availability, not quality."
+    },
+    "tip": "When the question lists what did NOT change, eliminate answers that blame those and look for the remaining variable."
+  },
+  "4.10": {
+    "answer": ["model mismatch", "prompt failure", "hallucination", "model mismatch", "hallucination"],
+    "explanation": "1 and 4 are capability gaps between the chosen model and the task (4 explicitly rules out the prompt with 'despite well-structured prompts'). 2 is conflicting instructions — the prompt is the defect. 3 and 5 are confident fabrications not grounded in the source or tool results.",
+    "tip": "For item 5 the failure type is hallucination, but the fix usually lives in prompt/tool design: instruct 'say not found when the tool returns nothing' and return explicit empty results."
+  },
+
+  "5.1": {
+    "answer": ["C"],
+    "explanation": "Human-in-the-loop is a targeted control: gate the irreversible, high-impact external actions (financial commitments leaving the organisation) and let low-risk drafting and internal updates flow. This preserves both safety and throughput.",
+    "why_not": {
+      "A": "Destroys the efficiency case for automation.",
+      "B": "Reviews after the money is committed.",
+      "D": "Leaves most high-impact actions ungated."
+    },
+    "tip": "Gate by risk tier: reversibility × impact × external-facing."
+  },
+  "5.2": {
+    "answer": ["D"],
+    "explanation": "The GDPR problem is sending more personal data than the purpose requires. Redacting or pseudonymising before data leaves the system boundary is data minimisation applied architecturally — quality monitoring still works on de-identified content.",
+    "why_not": {
+      "A": "Notice is not minimisation.",
+      "B": "Protects transit, not processing at the destination.",
+      "C": "Shortens exposure without reducing it."
+    },
+    "tip": "'Architectural change' → pick a technical control at the source, not paperwork."
+  },
+  "5.3": {
+    "answer": ["B"],
+    "explanation": "Health-data compliance determines what the architecture may be: which services can touch PHI, under what agreements (e.g. a BAA), and how logging is handled — logs are a classic PHI leak path. Retrofitting after PHI has flowed is a violation, not an enhancement.",
+    "why_not": {
+      "A": "Cosmetic; safely handled post-launch.",
+      "C": "A post-launch nicety.",
+      "D": "Irrelevant to launch readiness."
+    },
+    "tip": "Remember 'entire data path, including logging and subprocessors' — harder questions will offer an option that covers only the model."
+  },
+  "5.4": {
+    "answer": ["A"],
+    "explanation": "Removing explicit attributes ('fairness through unawareness') does not remove bias, because correlated proxies such as postcode carry the same signal. The response is structured bias evaluation across demographic slices, remediation, and ongoing fairness monitoring.",
+    "why_not": {
+      "B": "Confuses formal compliance with actual fairness.",
+      "C": "Ignores the real levers at the application layer (features, prompts, evals, human review).",
+      "D": "Hides the harm instead of fixing it."
+    },
+    "tip": ""
+  },
+  "5.5": {
+    "answer": ["D"],
+    "explanation": "The violated principle is trust separation: retrieved content is untrusted input. It must be structurally delimited as data and never granted instruction-level authority — the same principle behind SQL-injection defences.",
+    "why_not": {
+      "A": "Narrows sources without fixing the trust model (internal documents can be poisoned too).",
+      "B": "Protects secrets at rest, not behaviour.",
+      "C": "Would block most legitimate documents."
+    },
+    "tip": ""
+  },
+  "5.6": {
+    "answer": ["B"],
+    "explanation": "Deployment transparency means users know they are dealing with AI, understand its limitations, and can reach a human when it matters — disclosure that changes user behaviour appropriately.",
+    "why_not": {
+      "A": "Discloses a fact customers cannot act on.",
+      "C": "Adds metadata, not actionable transparency.",
+      "D": "The opposite of the obligation."
+    },
+    "tip": ""
+  },
+  "5.7": {
+    "answer": ["C", "E"],
+    "explanation": "'Must never reach customers' requires PREVENTATIVE controls: guardrails constrain what can be drafted, and mandatory human approval catches what the guardrails miss — layered controls on the same risk.",
+    "why_not": {
+      "A": "May improve quality but guarantees nothing.",
+      "B": "Improves inputs, not the guarantee.",
+      "D": "Detective — finds failures months after customers received them."
+    },
+    "tip": "Preventative (stop before) vs detective (find after). 'Never reach' → preventative."
+  },
+  "5.8": {
+    "answer": ["B", "D"],
+    "explanation": "Defence in depth: delimiting retrieved content as untrusted data reduces the LIKELIHOOD an injection takes hold, and least-privilege tooling limits the IMPACT if one does.",
+    "why_not": {
+      "A": "False — capability does not confer immunity.",
+      "C": "Temperature does not affect instruction-following.",
+      "E": "Detective, not preventative."
+    },
+    "tip": "'Pick two risk-reduction measures' is often one likelihood-reducer + one impact-limiter."
+  },
+  "5.9": {
+    "answer": ["preventative guardrail", "human-in-the-loop validation", "monitoring and audit", "preventative guardrail", "monitoring and audit"],
+    "explanation": "1 and 4 are absolute 'never / before display' requirements — they must be prevented, not caught later. 2 is a consequential judgement per decision — a human gate. 3 is after-the-fact reconstruction (audit trail) and 5 is fleet-wide trend detection (monitoring).",
+    "tip": "'Never / before displayed' → guardrail · 'consequential decision' → HITL · 'months later / trend' → monitoring & audit."
+  },
+
+  "6.1": {
+    "answer": ["B"],
+    "explanation": "The architect's job is to convert an unachievable absolute into an achievable agreement: explain that LLM systems are probabilistic, define measurable acceptance criteria, and design error handling (human review, fallbacks, escalation) proportionate to business risk.",
+    "why_not": {
+      "A": "Commits to the impossible.",
+      "C": "Walks away from a solvable conversation.",
+      "D": "A smaller model usually INCREASES errors, and it changes the error rate, not the expectation."
+    },
+    "tip": "Don't blindly agree, don't flatly refuse, don't act covertly → evidence + options + let the accountable owner decide."
+  },
+  "6.2": {
+    "answer": ["C"],
+    "explanation": "'We need a chatbot' is a proposed solution, not a problem statement. Structured discovery establishes the problem, users, success measures, data landscape and constraints — the chatbot may survive that process, or something better may emerge.",
+    "why_not": {
+      "A": "Prices an unvalidated solution.",
+      "B": "Anchors everyone to the solution before the problem is understood.",
+      "D": "Outsources the client's thinking to a competitor."
+    },
+    "tip": ""
+  },
+  "6.3": {
+    "answer": ["A"],
+    "explanation": "Evidence-based trade-off communication: quantify error rates, downstream rework and regulatory exposure against the saving, make a recommendation, and let the accountable stakeholder decide with full information. The architect advises; the business owner decides.",
+    "why_not": {
+      "B": "Deception destroys trust.",
+      "C": "Withholds material information from the decision-maker.",
+      "D": "Escalates before the direct conversation has even happened."
+    },
+    "tip": "Present each option with cost + risk + reversal cost."
+  },
+  "6.4": {
+    "answer": ["D"],
+    "explanation": "Ground expectation management in engineering reality: show the per-step latency budget, agree an SLA the pipeline can honour, and improve PERCEIVED speed with streaming (low time-to-first-token) and progress indicators.",
+    "why_not": {
+      "A": "Signs up to miss.",
+      "B": "Sacrifices the capability that justifies the system.",
+      "C": "Guarantees the gap surfaces in production."
+    },
+    "tip": ""
+  },
+  "6.5": {
+    "answer": ["C"],
+    "explanation": "The receiving team must operate and evolve the system: decision records explain WHY it is the way it is, runbooks explain HOW to keep it running, and evaluation baselines let them verify that future changes are improvements rather than regressions.",
+    "why_not": {
+      "A": "An artefact of the journey, not a tool for ownership.",
+      "B": "History, not operational knowledge.",
+      "D": "Documents what was not built, not what must be run."
+    },
+    "tip": ""
+  },
+  "6.6": {
+    "answer": ["A"],
+    "explanation": "Sponsors funded a business outcome, so the report should lead with the success criteria agreed at discovery, with technical metrics as supporting evidence. That closes the feedback loop that sustains sponsorship.",
+    "why_not": {
+      "B": "More of the wrong content.",
+      "C": "Removes the feedback loop entirely.",
+      "D": "Deepens the mismatch."
+    },
+    "tip": "Success criteria from discovery (6.7) → reused for reporting (6.6) → drive iteration priorities (6.9 item 4)."
+  },
+  "6.7": {
+    "answer": ["A", "C"],
+    "explanation": "Design decisions hang off two anchors: what success measurably means, and what the data landscape (availability, quality, access, compliance) permits.",
+    "why_not": {
+      "B": "A design/build output.",
+      "D": "A design/build output — premature at discovery; model choice should follow evaluation.",
+      "E": "Downstream of both anchors."
+    },
+    "tip": "Questions about phase X → eliminate outputs that belong to later phases."
+  },
+  "6.8": {
+    "answer": ["B", "E"],
+    "explanation": "Healthy change management makes each request's impact visible against the agreed baseline, and formally re-baselines timeline, cost and risk with sponsor sign-off when accepted changes move the plan. The relationship survives because nothing is hidden.",
+    "why_not": {
+      "A": "Silently erodes the project.",
+      "C": "Erodes the relationship through rigidity.",
+      "D": "Trades quality for schedule in the dark."
+    },
+    "tip": "In Domain 6, options containing 'silently' / 'quietly' are almost always wrong."
+  },
+  "6.9": {
+    "answer": ["discovery", "design", "handoff", "monitoring and iteration", "discovery"],
+    "explanation": "1 and 5 establish the problem and the definition of success — discovery. 2 makes architectural choices against agreed requirements — design. 3 transfers operational ownership — handoff. 4 uses production evidence to drive the next improvement cycle — monitoring and iteration.",
+    "tip": "Item 5 is a trap: a 'workshop' sounds like design, but defining success always belongs to discovery."
+  },
+
+  "7.1": {
+    "answer": ["B"],
+    "explanation": "Team-scale productivity comes from shared, version-controlled configuration and standards that every member inherits, with personal preferences layered on top — consistency where it matters, freedom where it doesn't. In Claude Code: committed CLAUDE.md and .claude/settings.json vs personal CLAUDE.local.md / settings.local.json / ~/.claude.",
+    "why_not": {
+      "A": "That is the current problem.",
+      "C": "Reduces the productivity the rollout exists to create.",
+      "D": "Discards the productivity gain entirely."
+    },
+    "tip": ""
+  },
+  "7.2": {
+    "answer": ["D"],
+    "explanation": "A reviewer anchored to the reasoning that produced the code inherits its blind spots. Independent review — fresh context, a separate session or subagent — restores genuine scrutiny, while humans keep merge authority.",
+    "why_not": {
+      "A": "Removes review altogether.",
+      "B": "Repeats the same anchoring (self-review bias).",
+      "C": "Restricts authoring without improving review."
+    },
+    "tip": ""
+  },
+  "7.3": {
+    "answer": ["A"],
+    "explanation": "Diagnose before treating: traces of affected sessions reveal whether the failure lives in inputs, retrieval, tool behaviour or the prompt. Changing the prompt first risks masking the real cause and destabilising behaviour that currently works.",
+    "why_not": {
+      "B": "A guess.",
+      "C": "A large intervention with no evidence it targets the cause.",
+      "D": "Abandons the whole system over a subset failure."
+    },
+    "tip": "'What should happen FIRST' during an incident → inspect traces / measure (see also 3.7, 4.5, 4.9)."
+  },
+  "7.4": {
+    "answer": ["C", "D"],
+    "explanation": "Scaling safely needs both an accelerator and a brake: shared standards and reusable workflows in version control spread proven practice, and execution constraints (allowed commands, protected branches, approval gates for destructive actions) bound what automation can do wrong.",
+    "why_not": {
+      "A": "Maximises the blast radius.",
+      "B": "Removes human oversight.",
+      "E": "Adds churn without vetting."
+    },
+    "tip": ""
+  }
+}
