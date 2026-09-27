@@ -14,7 +14,7 @@ framework ở đây chính là "lens" để trả lời mọi câu scenario củ
 | # | Lesson | Exam domain | Status |
 |---|--------|-------------|--------|
 | C1.1 | [Scope: Claude làm gì / system làm gì / human làm gì](notes/01-scope-what-claude-owns.md) | D1 | ⬜ |
-| C1.2 | [Augmented call vs. workflow vs. agent](notes/02-augmented-vs-workflow-vs-agent.md) | D1 | ⬜ |
+| C1.2 | [Augmented call vs. workflow vs. agent](notes/02-augmented-vs-workflow-vs-agent.md) | D1 | 🟨 |
 | C1.3 | [Reference architecture patterns & retrieval vs. live-state](notes/03-reference-architecture-patterns.md) | D1 + D3 | ⬜ |
 | C1.4 | [Model / context-window / context-strategy decisions](notes/04-model-context-strategy.md) | D2 + D4 | ⬜ |
 | C1.5 | [Platform entry points & customization layers](notes/05-platform-entry-points.md) | D3 + D7 | ⬜ |
