@@ -15,6 +15,20 @@
 4. Ghi điểm vào [mock-exam-log.md](../../exam-prep/mock-exam-log.md). Mục tiêu: **≥ 75% mỗi domain**.
 5. Ôn [decision-patterns.md](decision-patterns.md) — tổng hợp cách tư duy lặp lại xuyên đề.
 
+## Quiz HTML tương tác (nguyên văn tiếng Anh, chỉ dùng nội bộ)
+Script đọc **PDF gốc trên máy** → sinh file HTML để luyện: chọn đáp án là hiện ngay đúng/sai + giải thích tiếng Anh,
+có timer, navigator, flag, lọc theo domain / câu sai, bảng điểm theo domain (mục tiêu ≥ 75%), lưu tiến độ trong trình duyệt.
+
+```bash
+python practice-sets/matthew-purcell/quiz/build_quiz.py --pdf "C:/Users/toantv/Downloads/claude-architecture-professional.pdf"
+```
+
+- Output: `quiz/dist/quiz-ccarp-matthew-purcell-YYYYMMDD.html` — **đã gitignore**, không push.
+- Source (được commit): [build_quiz.py](quiz/build_quiz.py) · [template.html](quiz/template.html) ·
+  [explanations_en.json](quiz/explanations_en.json) (giải thích tiếng Anh tự viết).
+- Script tự **đối chiếu đáp án trong JSON với answer key của PDF** — lệch là dừng build.
+- Cần `pdftotext` (có sẵn trong Git Bash).
+
 ## Nội dung
 
 | Domain | Weight | Số câu | File |
