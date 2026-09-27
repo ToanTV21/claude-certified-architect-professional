@@ -20,6 +20,7 @@ framework ở đây chính là "lens" để trả lời mọi câu scenario củ
 | C1.5 | [Platform entry points & customization layers](notes/05-platform-entry-points.md) | D3 + D7 | ⬜ |
 | C1.6 | [Entry points vs. build-time interfaces vs. delivery routes](notes/06-delivery-routes-governance-constraints.md) | D3 + D5 | ⬜ |
 | C1.7 | [Designing system prompts, templates, and guardrails](notes/07-prompting-as-architecture.md) | D2 | 🟨 |
+| C1.8 | [When Claude Code got picked outside engineering](notes/08-entry-point-mcp-compliance-case-study.md) | D1 + D5 | ✅ |
 
 ## Exercises
 Code thực hành cho course này nằm trong [`exercises/`](exercises/).
