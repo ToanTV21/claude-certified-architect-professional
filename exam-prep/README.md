@@ -10,6 +10,7 @@ Bản đồ ôn thi — bắt đầu từ đây.
 5. [flashcards.md](flashcards.md) — ôn nhanh Q&A
 6. [cheat-sheet.md](cheat-sheet.md) — tra cứu nhanh trước khi thi
 7. [practice-questions.md](practice-questions.md) — luyện đề
+   - [`../practice-sets/matthew-purcell/`](../practice-sets/matthew-purcell/README.md) — bộ 63 câu của Matthew Purcell, giải thích tiếng Việt theo domain + decision patterns
 8. [mock-exam-log.md](mock-exam-log.md) — log kết quả mock exam
 9. [wrong-answers.md](wrong-answers.md) — ghi lại câu sai để ôn lại
 10. [references.md](references.md) — nguồn tài liệu chính thức
