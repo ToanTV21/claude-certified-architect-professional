@@ -152,5 +152,32 @@ Trả lời 7 quyết định theo đúng thứ tự (mỗi quyết định xây
 
 **Điểm mấu chốt:** câu trả lời tốt luôn nối liền 7 quyết định — must-prove constraint (bước 1) là thứ trade-off (bước 2) đang bảo vệ; governance row (bước 3) chạy trên chính constraint đó; decision log (bước 4) giải thích tại sao entry point (bước 5) được chọn vậy; outcome document (bước 6) đo đúng metric mà cả module đang xây tới; và biết nói "chưa xong" (bước 7) khi dữ liệu chưa đủ, thay vì vội chốt gate cho có.
 
+## Domain 7 — Developer Productivity & Operational Enablement
+
+### Module quiz: 5 câu tổng hợp Course 5
+> Nguồn: Course 5 (Team Enablement & Operational Productivity), Module Quiz — gắn với [C5.1](../courses/05-team-enablement-operational-productivity/notes/01-team-configuration-rollout.md), [C5.2](../courses/05-team-enablement-operational-productivity/notes/02-ai-assisted-dev-workflow-review.md), [C5.3](../courses/05-team-enablement-operational-productivity/notes/03-debugging-operational-support.md).
+
+**Q1 (Team setup):** Team rolling Claude ra 4 department cùng lúc, adoption không đều. Nước đi tốt nhất?
+A. Mandate daily usage target cho mọi người. B. **Enable 1 champion/department trước, chứng minh workflow, rồi seed adoption theo batch.** C. Đợi từng department tự hỏi khi cần support. D. Cấp model mạnh nhất cho tất cả để khuyến khích dùng.
+→ Đáp án: **B**. Nguyên tắc: adoption được engineer qua champion-rồi-batch, không phải all-hands 1 lần hay để mặc lumpy adoption tự xảy ra.
+
+**Q2 (Skills distribution):** 1 procedure phải chạy giống hệt nhau ở mọi department và phải revoke được từ 1 chỗ. Phân phối thế nào?
+A. Paste vào chat của từng team như 1 prompt. B. **Bundle vào 1 plugin do org quản lý, phân phối cho mọi department, có group/org targeting, version-controlled update, và rollback.** C. Claude Code project config trong repo của 1 team. D. Gửi email dạng document để mọi người tự làm theo.
+→ Đáp án: **B**. Org-provisioned Skill không có version pinning/rollback; project Skill chỉ scope 1 team; chỉ plugin org-managed đáp ứng đủ "chạy giống hệt + revoke từ 1 chỗ".
+
+**Q3 (Developer workflows):** Team ship code AI-generated nhanh hơn nhưng lọt 1 security issue. Thứ nhiều khả năng bị thiếu nhất?
+A. Code-review SLA miễn security review cho thay đổi nhỏ do AI tạo. B. Linter cấu hình để flag known vulnerability pattern trước khi merge. C. **Verification checklist mà code AI-generated phải pass trước production, gồm cả dimension security.** D. Update model thường xuyên hơn để có security patch mới.
+→ Đáp án: **C**. Đây là checklist đủ 4 dimension (correctness/security/maintainability/human understanding) — thiếu checklist là root cause, không phải thiếu 1 linter cụ thể.
+
+**Q4 (Judgment):** Lúc review, developer không giải thích được vì sao 1 đoạn code AI-generated xử lý input theo cách đó, nhưng test đều pass. Nên làm gì?
+A. Merge luôn vì test đã xanh. B. **Giữ lại tới khi tác giả giải thích được hành vi + lý do — đây là human-understanding check.** C. Xoá test đi và viết lại bằng tay. D. Escalate lên Architect cho mọi lần merge.
+→ Đáp án: **B**. Test xanh không thay thế được human-understanding dimension — đây chính là bài học từ case study "the merge nobody could explain".
+
+**Q5 (Operational support):** Chất lượng output của 1 deployment live giảm dần suốt 2 tháng, không có code change nào. Architect nên nhìn vào đâu đầu tiên?
+A. Tăng model tier; model mạnh hơn sẽ bù được gap của retrieval. B. **Model/prompt change, hoặc retrieval drift khi corpus lớn dần — nối triệu chứng với đúng architecture cause.** C. Tắt caching để mọi call luôn lấy content mới nhất. D. Rollback code deploy gần nhất và chạy lại integration test.
+→ Đáp án: **B**. Không có code change nghĩa là nguyên nhân nằm ở model/prompt/retrieval drift, không phải ở code — đúng bảng symptom→cause trong lesson.
+
+**Điểm mấu chốt của cả 5 câu:** CCAR-P domain 7 test khả năng nối đúng SYMPTOM/SCENARIO với đúng NGUYÊN TẮC đã học (champion-batch rollout, đúng cơ chế Skills distribution, đủ 4-dimension checklist, human-understanding luôn cần dù test xanh, symptom→architecture-cause thay vì đoán mò) — không phải câu hỏi thuộc lòng, mà là câu hỏi áp dụng nguyên tắc vào 1 tình huống cụ thể.
+
 ---
 Thêm câu hỏi mới khi luyện tập theo từng domain.
