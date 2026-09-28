@@ -42,7 +42,7 @@ Path bị khoá tuần tự: phải hoàn thành course trước mới mở đư
 | 2 | [Enterprise Integration & Production](courses/02-enterprise-integration-production/README.md) | 158 min | D4, D3 | ✅ Done |
 | 3 | [Responsible AI, Safety & Risk for Architects](courses/03-responsible-ai-safety-risk/README.md) | 114 min | D5 | ✅ Done |
 | 4 | [Stakeholder Engagement, Lifecycle & GTM](courses/04-stakeholder-engagement-lifecycle-gtm/README.md) | 178 min | D6, D3 | ✅ Done |
-| 5 | [Team Enablement & Operational Productivity](courses/05-team-enablement-operational-productivity/README.md) | 45 min | D7 | ⬜ Todo |
+| 5 | [Team Enablement & Operational Productivity](courses/05-team-enablement-operational-productivity/README.md) | 45 min | D7 | ✅ Done |
 
 > **Prerequisites** Anthropic khuyến nghị học trước: Claude 101 · Claude Code in Action ·
 > AI Fluency Foundations.

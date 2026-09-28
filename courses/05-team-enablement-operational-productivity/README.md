@@ -11,9 +11,9 @@ system is running, without pulling the Architect into every issue.
 
 | # | Lesson | Exam domain | Status |
 |---|--------|-------------|--------|
-| C5.1 | [Team setup: shared config, rollout, Skills distribution, spend controls](notes/01-team-configuration-rollout.md) | D7 | ⬜ |
-| C5.2 | [Dev workflow với AI tooling & review discipline](notes/02-ai-assisted-dev-workflow-review.md) | D7 | ⬜ |
-| C5.3 | [Debug & operational issue resolution, team self-sufficiency](notes/03-debugging-operational-support.md) | D7 + D4 | ⬜ |
+| C5.1 | [Team setup: shared config, rollout, Skills distribution, spend controls](notes/01-team-configuration-rollout.md) | D7 | ✅ |
+| C5.2 | [Dev workflow với AI tooling & review discipline](notes/02-ai-assisted-dev-workflow-review.md) | D7 | ✅ |
+| C5.3 | [Debug & operational issue resolution, team self-sufficiency](notes/03-debugging-operational-support.md) | D7 + D4 | ✅ |
 
 ## Exercises
 Code thực hành cho course này nằm trong [`exercises/`](exercises/).
