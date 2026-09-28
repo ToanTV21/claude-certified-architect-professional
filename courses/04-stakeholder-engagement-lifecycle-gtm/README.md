@@ -13,11 +13,11 @@ CCAR-P khác CCA-F rõ nhất — câu hỏi về *cách trình bày* quyết đ
 
 | # | Lesson | Exam domain | Status |
 |---|--------|-------------|--------|
-| C4.1 | [Structured discovery với non-technical stakeholder](notes/01-structured-discovery.md) | D6 + D1 | ⬜ |
-| C4.2 | [Trình bày trade-off theo cost / risk / reversal](notes/02-presenting-tradeoffs.md) | D6 | ⬜ |
-| C4.3 | [Stakeholder feedback loop & governance checkpoint trong lifecycle](notes/03-lifecycle-feedback-loops.md) | D6 + D5 | ⬜ |
-| C4.4 | [Partner go-to-market: demo, objection handling, joint scoping](notes/04-partner-gtm-motion.md) | D6 | ⬜ |
-| C4.5 | [API vs. Bedrock vs. Vertex vs. third-party + outcome document](notes/05-deployment-routes-outcome-doc.md) | D3 + D6 | ⬜ |
+| C4.1 | [Structured discovery với non-technical stakeholder](notes/01-structured-discovery.md) | D6 + D1 | ✅ |
+| C4.2 | [Trình bày trade-off theo cost / risk / reversal](notes/02-presenting-tradeoffs.md) | D6 | ✅ |
+| C4.3 | [Stakeholder feedback loop & governance checkpoint trong lifecycle](notes/03-lifecycle-feedback-loops.md) | D6 + D5 | ✅ |
+| C4.4 | [Partner go-to-market: demo, objection handling, joint scoping](notes/04-partner-gtm-motion.md) | D6 | ✅ |
+| C4.5 | [API vs. Bedrock vs. Vertex vs. third-party + outcome document](notes/05-deployment-routes-outcome-doc.md) | D3 + D6 | ✅ |
 
 ## Exercises
 Code thực hành cho course này nằm trong [`exercises/`](exercises/).
