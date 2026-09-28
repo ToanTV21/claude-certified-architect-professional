@@ -105,5 +105,52 @@ Trả lời 5 quyết định theo đúng thứ tự 5 lesson đã học (mỗi 
 
 **Điểm mấu chốt:** câu trả lời tốt luôn gọi tên cụ thể — injection point nào, fail direction nào, biến routing nào, evidence artifact nào — chứ không mô tả khái niệm chung chung. Đây là cách CCAR-P kiểm tra khả năng áp cả 5 lesson vào 1 tình huống liền mạch, giống hệt cách bài capstone Course 2 kiểm tra D1/D3/D4.
 
+## Domain 6 — Stakeholder Communication & Lifecycle Management
+
+### Bài tập: Find the undocumented assumption
+> Nguồn: Course 4 (Stakeholder Engagement, Lifecycle & GTM), checkpoint gắn với [C4.1](../courses/04-stakeholder-engagement-lifecycle-gtm/notes/01-structured-discovery.md).
+
+**Đề bài:** So sánh requirements document dưới đây với đúng nguyên văn stakeholder đã nói, tìm ra item nào là **assumption chưa được document** (không có statement nào của stakeholder support nó).
+
+Requirements document:
+1. Claude drafts the customer email, but a person actually sends it.
+2. Responses must return within a two-second perceived budget.
+3. Refunds above the threshold route to a human approver.
+4. Conversation transcripts are retained for sixty days for analytics.
+
+Stakeholder đã nói:
+- "Anything big requires a person's sign off."
+- "Draft the reply, but we send it ourselves."
+- "It has to feel instant to the user."
+
+**Đáp án mẫu:** Item 4 (giữ transcript 60 ngày cho analytics) là assumption — không câu nào trong 3 câu stakeholder nói nhắc tới retention period hay mục đích analytics. Item 1↔"Draft the reply, but we send it ourselves", item 2↔"It has to feel instant", item 3↔"Anything big requires sign off" đều có nguồn rõ ràng.
+
+**Bẫy hay gặp:** đây chính là lỗi "discovery call turned into design session" — Architect tự thêm 1 requirement nghe có vẻ hợp lý (retention cho analytics) mà không quay lại hỏi stakeholder, y hệt case study "quick check" bị đánh giá thấp trong lesson (rule ẩn chỉ lộ ra 2 tuần sau ở compliance review).
+
+### Bài tập tổng hợp (capstone): Architect a regulated multi-platform deployment end to end
+> Nguồn: Course 4, Cumulative Module Exercise — tổng hợp cả 5 lesson C4.1-C4.5.
+
+**Bối cảnh:** Mạng lưới bệnh viện khu vực (2 bang) có nghĩa vụ health-privacy, triển khai clinical documentation assistant trên 2 cloud platform. Architect gốc đang rotate off, CFO khách hàng đòi bằng chứng giá trị kinh doanh. Nurse đọc (dictate) tương tác bệnh nhân, assistant soạn clinical note có cấu trúc; 1 clinician có license phải authorize mỗi note trước khi vào patient record. Deployment có audit-trail requirement + data-residency rule. Partner chuẩn hoá trên AWS nhưng vẫn chạy 1 số việc back-end không regulated trên direct API. Đã 4 tuần kể từ khi deploy.
+
+Trả lời 7 quyết định theo đúng thứ tự (mỗi quyết định xây trên quyết định trước):
+1. **Discovery:** must-prove constraint nào chi phối kiến trúc nhiều nhất? Viết 1 requirement row nó buộc phải có.
+2. **Tradeoff framing:** network muốn latency thấp nhất — frame trade-off giữa cắt logging để giảm latency vs giữ audit trail, đủ 3 yếu tố kể cả reversal cost.
+3. **Feedback loop:** viết 1 governance-table row map output audit bắt buộc → stakeholder-review trigger CHẠY THEO LỊCH, độc lập với mọi metric.
+4. **Documentation:** decision-log row nào nếu thiếu sẽ khiến successor đảo ngược 1 quyết định load-bearing về compliance? Nêu rejected alternative nó phải mang theo.
+5. **Entry point selection:** chọn route chính/phụ với AWS standardization + obligation nghiêm ngặt + residency rule; nêu bước config ngăn lỗi residency phổ biến nhất.
+6. **Outcome document:** nêu before/after business metric + control auditable giúp document dùng được cho case mở rộng trước CFO.
+7. **Phase transition:** artifact nào gate bước chuyển phase tiếp theo? Đánh giá gate đã thoả mãn chưa ở tuần 4.
+
+**Đáp án mẫu (rút gọn):**
+1. Must-prove: health-privacy obligation + audit-trail requirement. Requirement row: hệ thống phải tạo record auditable cho mọi note do model tạo đã được clinician có license review, trace được về đúng interaction — vì workflow mang formal proof obligation theo health-privacy regime.
+2. Gain (cắt logging): phản hồi nhanh hơn, workflow clinician mượt hơn. Give up: audit detail per-interaction cần cho health-privacy obligation. Reversal cost: khi hệ thống đã build quanh latency gain, khôi phục logging cần redesign lại interaction layer, và bất kỳ gap period nào cũng tạo compliance exposure phải disclose + remediate.
+3. Signal: periodic output audit theo health-privacy documentation standard. Trigger: theo lịch (quarterly, theo obligation), fire bất kể eval score/error rate. Owner: Compliance lead. Action: stakeholder review với audit record nộp cho compliance officer.
+4. Decision row: context strategy — thực thi in-region tường minh qua Bedrock, không dùng global endpoint. Rejected alternative: global Bedrock endpoint (đơn giản hơn). Vì sao load-bearing: successor không thấy rationale này sẽ revert về global config để fix performance issue và phá vỡ residency — y hệt postmortem financial-services trong lesson.
+5. Primary: AWS Bedrock, config thực thi in-region tường minh (không phải global endpoint) — vì partner chuẩn hoá AWS và residency rule chi phối; verify đúng compliance requirement cụ thể (HIPAA BAA hoặc data sovereignty) được thoả bởi chính config Bedrock đang dùng. Secondary: Direct API cho task back-end không regulated. Config step: set region parameter tường minh trong Bedrock client, không dựa vào default endpoint resolution.
+6. Before metric: thời gian trung bình từ lúc nurse dictate tới khi có clinical note hoàn chỉnh đã được clinician authorize (đo baseline trước deploy). After metric: cùng metric, cùng định nghĩa đo, sau deploy. Auditable control: clinician-authorization log — mỗi note có authorization record gắn timestamp nối clinician/note/interaction, biến so sánh before-after thành auditable thay vì chỉ là assertion.
+7. Gate artifact: outcome document (đủ before/after metric + control auditable + measurement owner) — gate quyết định mở rộng mà CFO đang hỏi. Đánh giá: **chưa thoả mãn** ở tuần 4 — before metric đã có từ baseline, nhưng after metric cần đủ thời gian vận hành production để đo. Hành động đúng: đặt tên measurement owner, xác nhận control đang log, lên lịch hoàn thành outcome document ở 1 mốc post-launch xác định.
+
+**Điểm mấu chốt:** câu trả lời tốt luôn nối liền 7 quyết định — must-prove constraint (bước 1) là thứ trade-off (bước 2) đang bảo vệ; governance row (bước 3) chạy trên chính constraint đó; decision log (bước 4) giải thích tại sao entry point (bước 5) được chọn vậy; outcome document (bước 6) đo đúng metric mà cả module đang xây tới; và biết nói "chưa xong" (bước 7) khi dữ liệu chưa đủ, thay vì vội chốt gate cho có.
+
 ---
 Thêm câu hỏi mới khi luyện tập theo từng domain.
